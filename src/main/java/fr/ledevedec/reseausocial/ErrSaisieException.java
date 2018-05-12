@@ -14,6 +14,6 @@ public class ErrSaisieException extends InputMismatchException {
 	@Override
 	public String getMessage() {
 
-		return "Merci de saisir un IntrÃ©gral";
+		return "Merci de saisir un Intrégral";
 	}
 }

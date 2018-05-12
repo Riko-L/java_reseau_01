@@ -10,7 +10,7 @@ import fr.ledevedec.reseausocial.ReseauSocial;
 
 public class Menu {
 
-	private MenuEntry[] menu;
+	private List <MenuEntry> menu;
 	private List<MenuEntry> menuGenerate;
 	private Scanner clavier;
 	private CreateUser createUser;
@@ -34,7 +34,7 @@ public class Menu {
 
 	public Menu() {
 
-		menu = new MenuEntry[17];
+		menu = new ArrayList<MenuEntry>();
 		menuGenerate = new ArrayList<MenuEntry>();
 		clavier = new Scanner(System.in);
 		createUser = new CreateUser();
@@ -55,23 +55,23 @@ public class Menu {
 		updateLevel = new UpdateLevel();
 		searchUser = new SearchUser();
 
-		int i = 0;
-		this.menu[i += 1] = createUser;
-		this.menu[i += 1] = showUser;
-		this.menu[i += 1] = searchUser;
-		this.menu[i += 1] = selectUser;
-		this.menu[i += 1] = updateUser;
-		this.menu[i += 1] = delUser;
-		this.menu[i += 1] = listAllUser;
-		this.menu[i += 1] = writeMessage;
-		this.menu[i += 1] = showMessage;
-		this.menu[i += 1] = delMessage;
-		this.menu[i += 1] = delAllMessage;
-		this.menu[i += 1] = addFriend;
-		this.menu[i += 1] = delFriend;
-		this.menu[i += 1] = showFriend;
-		this.menu[i += 1] = updateLevel;
-		this.menu[i += 1] = stopSoft;
+		
+		menu.add(createUser);
+		menu.add(showUser);
+		menu.add(searchUser);
+		menu.add(selectUser);
+		menu.add(updateUser);
+		menu.add(delUser);
+		menu.add(listAllUser);
+		menu.add(writeMessage);
+		menu.add(showMessage);
+		menu.add(delMessage);
+		menu.add(delAllMessage);
+		menu.add(addFriend);
+		menu.add(delFriend);
+		menu.add(showFriend);
+		menu.add(updateLevel);
+		menu.add(stopSoft);
 
 		createMenu();
 
@@ -82,15 +82,15 @@ public class Menu {
 		int g = 0;
 		menuGenerate = new ArrayList<MenuEntry>();
 		
-		for (int i = 0; i < menu.length; i++) {
-			if (menu[i] != null) {
+		for (int i = 0; i < menu.size(); i++) {
+			if (menu.get(i) != null) {
 
-				if (menu[i].isModerator(ReseauSocial.currentUser) && (menu[i].getAcl() == 1 || menu[i].getAcl() == 0)) {
-					menuGenerate.add(menu[i]);
+				if (menu.get(i).isModerator(ReseauSocial.currentUser) && (menu.get(i).getAcl() == 1 || menu.get(i).getAcl() == 0)) {
+					menuGenerate.add(menu.get(i));
 					System.out.println("[" + g + "] " + menuGenerate.get(g).display());
 					g++;
-				} else if (!menu[i].isModerator(ReseauSocial.currentUser) && menu[i].getAcl() == 0) {
-					menuGenerate.add(menu[i]);
+				} else if (!menu.get(i).isModerator(ReseauSocial.currentUser) && menu.get(i).getAcl() == 0) {
+					menuGenerate.add(menu.get(i));
 					System.out.println("[" + g + "] " + menuGenerate.get(g).display());
 					g++;
 				}
@@ -103,8 +103,9 @@ public class Menu {
 
 			choixInputClavier = choixClavier();
 
-			if (choixInputClavier >= menuGenerate.size()) {
+			if (choixInputClavier >= menuGenerate.size() || choixInputClavier < 0) {
 				System.out.println("Merci d'entrer une valeur du menu");
+				createMenu();
 			} else {
 					menuGenerate.get(choixInputClavier).exec();
 					createMenu();

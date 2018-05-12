@@ -217,7 +217,7 @@ public class User extends Personne {
 		return 0;
 	}
 
-	public String fullName() {
+	public String getFullName() {
 		return this.nom + " " + this.prenom;
 	}
 

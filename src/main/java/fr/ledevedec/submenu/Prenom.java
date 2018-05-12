@@ -22,25 +22,5 @@ public class Prenom extends MenuEntry{
 		return index;
 	}
 
-	@Override
-	public boolean isModerator(User user) {
-		return false;
-	}
-
-	@Override
-	public int getAcl() {
-		return 0;
-	}
-
-	@Override
-	public void setAcl(int acl) {
-		this.acl = acl;
-		
-	}
-
-	@Override
-	public void setDisplay(int display) {
-		
-	}
 
 }

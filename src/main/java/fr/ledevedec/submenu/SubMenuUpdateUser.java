@@ -49,7 +49,7 @@ public class SubMenuUpdateUser {
 
 			choixInputClavier = choixClavier();
 
-			if (choixInputClavier >= menu.size()) {
+			if (choixInputClavier >= menu.size() || choixInputClavier < 0 ) {
 				System.out.println("Merci d'entrer une valeur du menu");
 			} else {
 
