@@ -1,9 +1,12 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
-
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class UpdateUser extends MenuEntry {
+
+	public UpdateUser(UserUtility userUtility) {
+		this.userUtility = userUtility;
+	}
 
 	@Override
 	public String display() {
@@ -20,7 +23,7 @@ public class UpdateUser extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.updateProfil();
+		userUtility.updateProfil();
 
 	}
 

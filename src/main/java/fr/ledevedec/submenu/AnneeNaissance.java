@@ -1,7 +1,8 @@
 package fr.ledevedec.submenu;
 
 import fr.ledevedec.mainmenu.MenuEntry;
-import fr.ledevedec.reseausocial.User;
+
+
 
 public class AnneeNaissance extends MenuEntry{
 
@@ -15,14 +16,16 @@ public class AnneeNaissance extends MenuEntry{
 		return msg;
 	}
 
-	@Override
-	public void exec() {
-			
-	}
-	
+
 	public int exec(int index) {
 
 		return index;
+	}
+
+	@Override
+	public void exec() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

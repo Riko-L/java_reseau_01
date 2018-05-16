@@ -1,7 +1,5 @@
 package fr.ledevedec.mainmenu;
 
-
-
 public class StopSoft extends MenuEntry {
 
 	

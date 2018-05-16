@@ -1,8 +1,12 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
+import fr.ledevedec.reseausocial.MessageUtility;
 
 public class WriteMessage extends MenuEntry {
+
+	public WriteMessage(MessageUtility messageUtility) {
+		this.messageUtility = messageUtility;
+	}
 
 	@Override
 	public String display() {
@@ -20,7 +24,7 @@ public class WriteMessage extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.writeMessage();
+		messageUtility.writeMessage();
 
 	}
 

@@ -1,7 +1,8 @@
 package fr.ledevedec.submenu;
 
 import fr.ledevedec.mainmenu.MenuEntry;
-import fr.ledevedec.reseausocial.User;
+import fr.ledevedec.reseausocial.ReseauSocial;
+
 
 public class RetourMenu extends MenuEntry {
 
@@ -12,14 +13,17 @@ public class RetourMenu extends MenuEntry {
 		return msg;
 	}
 
-	@Override
-	public void exec() {
 
-	}
-	
 	public int exec(int index) {
 
 		return index;
+	}
+
+
+	@Override
+	public void exec() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

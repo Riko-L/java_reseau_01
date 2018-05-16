@@ -1,12 +1,14 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
-
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class CreateUser extends MenuEntry {
 
 	private int acl = 1;
 
+	public CreateUser(UserUtility userUtility) {
+		this.userUtility = userUtility;
+	}
 
 	@Override
 	public String display() {
@@ -16,10 +18,9 @@ public class CreateUser extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.addUser();
+		userUtility.addUser();
 	}
 
-	
 	public int getAcl() {
 		return acl;
 	}

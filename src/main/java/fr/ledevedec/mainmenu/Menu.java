@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import fr.ledevedec.reseausocial.ErrSaisieException;
-import fr.ledevedec.reseausocial.ReseauSocial;
+import fr.ledevedec.reseausocial.MessageUtility;
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class Menu {
 
@@ -31,29 +32,35 @@ public class Menu {
 	private SearchUser searchUser;
 
 	private int choixInputClavier;
+	
+	private UserUtility userUtility;
+	private MessageUtility messageUtility;
 
-	public Menu() {
+	public Menu(UserUtility userUtility, MessageUtility messageUtility) {
 
+		this.userUtility = userUtility;
+		this.messageUtility = messageUtility;
+		
 		menu = new ArrayList<MenuEntry>();
 		menuGenerate = new ArrayList<MenuEntry>();
 		clavier = new Scanner(System.in);
-		createUser = new CreateUser();
+		createUser = new CreateUser(userUtility);
 		
-		showUser = new ShowUser();
-		selectUser = new SelectUser();
-		updateUser = new UpdateUser();
-		delUser = new DelUser();
-		listAllUser = new ListAllUser();
-		writeMessage = new WriteMessage();
-		showMessage = new ShowMessage();
-		delMessage = new DelMessage();
-		delAllMessage = new DelAllMessage();
-		addFriend = new AddFriend();
-		showFriend = new ShowFriend();
-		delFriend = new DelFriend();
+		showUser = new ShowUser(userUtility);
+		selectUser = new SelectUser(userUtility);
+		updateUser = new UpdateUser(userUtility);
+		delUser = new DelUser(userUtility);
+		listAllUser = new ListAllUser(userUtility);
+		writeMessage = new WriteMessage(messageUtility);
+		showMessage = new ShowMessage(messageUtility);
+		delMessage = new DelMessage(messageUtility);
+		delAllMessage = new DelAllMessage(messageUtility);
+		addFriend = new AddFriend(userUtility);
+		showFriend = new ShowFriend(userUtility);
+		delFriend = new DelFriend(userUtility);
 		stopSoft = new StopSoft();
-		updateLevel = new UpdateLevel();
-		searchUser = new SearchUser();
+		updateLevel = new UpdateLevel(userUtility);
+		searchUser = new SearchUser(userUtility);
 
 		
 		menu.add(createUser);
@@ -85,11 +92,11 @@ public class Menu {
 		for (int i = 0; i < menu.size(); i++) {
 			if (menu.get(i) != null) {
 
-				if (menu.get(i).isModerator(ReseauSocial.currentUser) && (menu.get(i).getAcl() == 1 || menu.get(i).getAcl() == 0)) {
+				if (menu.get(i).isModerator(userUtility.getCurrentUser()) && (menu.get(i).getAcl() == 1 || menu.get(i).getAcl() == 0)) {
 					menuGenerate.add(menu.get(i));
 					System.out.println("[" + g + "] " + menuGenerate.get(g).display());
 					g++;
-				} else if (!menu.get(i).isModerator(ReseauSocial.currentUser) && menu.get(i).getAcl() == 0) {
+				} else if (!menu.get(i).isModerator(userUtility.getCurrentUser()) && menu.get(i).getAcl() == 0) {
 					menuGenerate.add(menu.get(i));
 					System.out.println("[" + g + "] " + menuGenerate.get(g).display());
 					g++;

@@ -1,10 +1,15 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
+import fr.ledevedec.reseausocial.MessageUtility;
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class DelAllMessage extends MenuEntry {
 
 	private int acl = 1;
+
+	public DelAllMessage(MessageUtility messageUtility) {
+		this.messageUtility = messageUtility;
+	}
 
 	@Override
 	public String display() {
@@ -15,10 +20,10 @@ public class DelAllMessage extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.delMessagerie();
+		messageUtility.delMessagerie();
 
 	}
-	
+
 	public int getAcl() {
 		return acl;
 	}

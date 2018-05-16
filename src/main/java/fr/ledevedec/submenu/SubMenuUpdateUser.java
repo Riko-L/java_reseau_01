@@ -14,12 +14,13 @@ public class SubMenuUpdateUser {
 	private MenuEntry nom;
 	private MenuEntry prenom;
 	private MenuEntry anneeNaissance;
+	private MenuEntry enregistrer;
 	private MenuEntry retourMenu;
 	private List<MenuEntry> menu;
 
 	private int choixInputClavier;
 	private int choixUser;
-
+	
 	public SubMenuUpdateUser() {
 
 		clavier = new Scanner(System.in);
@@ -27,11 +28,14 @@ public class SubMenuUpdateUser {
 		nom = new Nom();
 		prenom = new Prenom();
 		anneeNaissance = new AnneeNaissance();
+		enregistrer = new Enregistrer();
 		retourMenu = new RetourMenu();
+	
 
 		menu.add(nom);
 		menu.add(prenom);
 		menu.add(anneeNaissance);
+		menu.add(enregistrer);
 		menu.add(retourMenu);
 
 	}

@@ -1,9 +1,14 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class ShowUser extends MenuEntry {
 
+	
+	public ShowUser(UserUtility userUtility) {
+		this.userUtility = userUtility;
+	}
+	
 	@Override
 	public String display() {
 		switch (this.display) {
@@ -19,7 +24,7 @@ public class ShowUser extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.showProfil();
+		userUtility.showProfil();
 
 	}
 }

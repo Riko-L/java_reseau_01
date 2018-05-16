@@ -1,8 +1,15 @@
 package fr.ledevedec.mainmenu;
 
+import fr.ledevedec.reseausocial.MessageUtility;
 import fr.ledevedec.reseausocial.User;
+import fr.ledevedec.reseausocial.UserUtility;
 
 public abstract class MenuEntry {
+	
+	
+	protected UserUtility userUtility;
+
+	protected MessageUtility messageUtility;
 
 	/**
 	 * Defini le droit d'affichage du contenu de l'élément du menu
@@ -30,10 +37,12 @@ public abstract class MenuEntry {
 	 */
 	public abstract String display();
 
+	
 	/**
 	 * Execute une methode donnée en fonction du choix du menu
 	 */
 	public abstract void exec();
+	
 
 	/**
 	 * 
@@ -91,5 +100,6 @@ public abstract class MenuEntry {
 	public void setDisplay(int display) {
 		this.display = display;
 	}
+
 
 }

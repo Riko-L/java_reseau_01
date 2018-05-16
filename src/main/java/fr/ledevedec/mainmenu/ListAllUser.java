@@ -1,32 +1,28 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
-
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class ListAllUser extends MenuEntry {
 
-	
 	private int acl = 1;
-	
-	/* (non-Javadoc)
-	 * @see com.campus.mainmenu.MenuEntry#display()
-	 */
+
+	public ListAllUser(UserUtility userUtility) {
+		this.userUtility = userUtility;
+	}
+
 	@Override
 	public String display() {
 		msg = "Lister tous les utilisateurs";
-		
+
 		return msg;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.campus.mainmenu.MenuEntry#exec()
-	 */
 	@Override
 	public void exec() {
-		ReseauSocial.listUser();
+		userUtility.listUser();
 
 	}
-	
+
 	public int getAcl() {
 		return acl;
 	}
@@ -34,6 +30,5 @@ public class ListAllUser extends MenuEntry {
 	public void setAcl(int acl) {
 		this.acl = acl;
 	}
-
 
 }

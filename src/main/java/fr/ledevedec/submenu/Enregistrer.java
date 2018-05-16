@@ -1,15 +1,15 @@
 package fr.ledevedec.submenu;
 
 import fr.ledevedec.mainmenu.MenuEntry;
-import fr.ledevedec.reseausocial.ReseauSocial;
 
 
-public class Prenom extends MenuEntry{
+
+public class Enregistrer extends MenuEntry{
 
 
 	@Override
 	public String display() {
-		msg = "Prénom :";
+		msg = "Enregister les données :";
 		return msg;
 	}
 

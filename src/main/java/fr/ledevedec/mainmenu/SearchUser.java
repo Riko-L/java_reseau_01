@@ -1,9 +1,12 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
-
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class SearchUser extends MenuEntry {
+
+	public SearchUser(UserUtility userUtility) {
+		this.userUtility = userUtility;
+	}
 
 	@Override
 	public String display() {
@@ -14,7 +17,7 @@ public class SearchUser extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.search();
+		userUtility.search();
 
 	}
 

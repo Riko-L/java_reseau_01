@@ -68,5 +68,36 @@ public class Moderateur extends User implements Salarie{
 		
 		
 	}
+	
+/*	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+
+		if (pseudo == null) {
+			if (other.pseudo != null)
+				return false;
+		}
+		if (nom == null) {
+			if (other.nom != null)
+				return false;
+		}
+		if (prenom == null) {
+			if (other.prenom != null)
+				return false;
+		}
+
+		if (!pseudo.toLowerCase().equals(other.pseudo.toLowerCase()) && !nom.toLowerCase().equals(other.nom.toLowerCase()) && !prenom.toLowerCase().equals(other.prenom.toLowerCase())) {
+			return false;
+			
+		}
+
+		return true;
+	}*/
 
 }

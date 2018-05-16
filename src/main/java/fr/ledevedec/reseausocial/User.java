@@ -15,18 +15,17 @@ public class User extends Personne {
 	/**
 	 * @see #setPseudo(String)
 	 */
-	private String pseudo;
+	protected String pseudo;
 
 	/**
 	 * Tableau contenant la liste des amis Maximum 11 Amis
 	 */
-	// private User[] friends = new User[10];
+
 	private List<User> friends = new ArrayList<User>();
 
 	/**
 	 * Tableau contenant la liste des messages Maximum 11 messages
 	 */
-	// private String[] messages = new String[10];
 
 	private List<Message> messages = new ArrayList<Message>();
 
@@ -220,5 +219,36 @@ public class User extends Personne {
 	public String getFullName() {
 		return this.nom + " " + this.prenom;
 	}
+
+
+	/*public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+
+		if (pseudo == null) {
+			if (other.pseudo != null)
+				return false;
+		}
+		if (nom == null) {
+			if (other.nom != null)
+				return false;
+		}
+		if (prenom == null) {
+			if (other.prenom != null)
+				return false;
+		}
+
+		if (!pseudo.toLowerCase().equals(other.pseudo.toLowerCase()) && !nom.toLowerCase().equals(other.nom.toLowerCase()) && !prenom.toLowerCase().equals(other.prenom.toLowerCase())) {
+			return false;
+			
+		}
+
+		return true;
+	}*/
 
 }

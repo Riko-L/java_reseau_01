@@ -1,11 +1,14 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
-
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class DelUser extends MenuEntry {
 
 	private int acl = 1;
+
+	public DelUser(UserUtility userUtility) {
+		this.userUtility = userUtility;
+	}
 
 	@Override
 	public String display() {
@@ -16,10 +19,10 @@ public class DelUser extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.delUser();
+		userUtility.delUser();
 
 	}
-	
+
 	public int getAcl() {
 		return acl;
 	}
@@ -28,4 +31,3 @@ public class DelUser extends MenuEntry {
 		this.acl = acl;
 	}
 }
-

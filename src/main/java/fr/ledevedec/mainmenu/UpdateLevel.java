@@ -1,11 +1,14 @@
 package fr.ledevedec.mainmenu;
 
-import fr.ledevedec.reseausocial.ReseauSocial;
+import fr.ledevedec.reseausocial.UserUtility;
 
 public class UpdateLevel extends MenuEntry {
 
 	int acl = 1;
-	
+
+	public UpdateLevel(UserUtility userUtility) {
+		this.userUtility = userUtility;
+	}
 
 	@Override
 	public String display() {
@@ -15,10 +18,10 @@ public class UpdateLevel extends MenuEntry {
 
 	@Override
 	public void exec() {
-		ReseauSocial.changeLevel();
-		
+		userUtility.changeLevel();
+
 	}
-	
+
 	public int getAcl() {
 		return acl;
 	}
@@ -28,4 +31,3 @@ public class UpdateLevel extends MenuEntry {
 	}
 
 }
-
