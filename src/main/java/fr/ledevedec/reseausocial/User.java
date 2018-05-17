@@ -16,27 +16,29 @@ public class User extends Personne {
 	 * @see #setPseudo(String)
 	 */
 	protected String pseudo;
+	protected List<User> listAmi = new ArrayList<User>();
+	
 
-
-	/**
-	 * Initialisation de d'un utilisateur
-	 * 
-	 * @param nom
-	 *            Nom de l'utilisateur
-	 * @param prenom
-	 *            Prénom de l'utilisateur
-	 * @param dateNaissance
-	 *            Année de naissance de l'utilisateur
-	 */
-	public User(String nom, String prenom, String pseudo, String dateDeNaissance) {
-
+	public User () {}
+	
+	public User(long id, String nom, String prenom, String pseudo, String dateDeNaissance, List<User> listAmi) {
+		
+		this.id = id;
 		this.nom = nom;
 		this.prenom = prenom;
-		this.dateDeNaissance = dateDeNaissance;
 		this.pseudo = pseudo;
-
+		this.dateDeNaissance = dateDeNaissance;
+		this.listAmi = listAmi;
 	}
 
+	/**
+	 * Retour l'id de l'utilisateur
+	 * @return
+	 */
+	public long getId() {
+		return id;
+	}
+	
 	/**
 	 * Retourne le Nom de l'Utilisateur
 	 * 
@@ -115,8 +117,38 @@ public class User extends Personne {
 		this.pseudo = pseudo;
 	}
 
+	public List<User> getListAmi() {
+		return listAmi;
+	}
+	
 
 
+
+
+
+	public void setListAmi(List<User> listAmi) {
+		this.listAmi = listAmi;
+	}
+
+	public void addAmi(User user) {
+		this.listAmi.add(user);
+	}
+	
+	public User getAmi(int index) {
+		return this.listAmi.get(index);
+	}
+
+	public String toString() {
+		
+		String str = "*******************************\n";
+		str += "NOM : " + this.getNom() + "\n";
+		str += "*******************************\n";
+		str += "LISTE DES AMIS : \n";
+		for(User user : this.listAmi)
+		str += user.toString() + "\n";
+		return str;
+		}
+		
 	/**
 	 * Savoir si l'utilisateur est un modérateur
 	 * 
@@ -139,8 +171,6 @@ public class User extends Personne {
 	public String getFullName() {
 		return this.nom + " " + this.prenom;
 	}
-
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -177,8 +207,5 @@ public class User extends Personne {
 		}
 		return true;
 	}
-
-
-	
 	
 }

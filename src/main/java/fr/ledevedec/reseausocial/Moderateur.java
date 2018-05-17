@@ -1,5 +1,7 @@
 package fr.ledevedec.reseausocial;
 
+import java.util.List;
+
 /**
  * Classe Modérateur permet de créer des modérateurs
  * 
@@ -20,8 +22,8 @@ public class Moderateur extends User implements Salarie{
 	 * @param dateNaissance
 	 *            Date de naissance du Modérateur
 	 */
-	public Moderateur(String nom, String prenom, String pseudo, String dateNaissance) {
-		super(nom, prenom, pseudo, dateNaissance);
+	public Moderateur(long id, String nom, String prenom, String pseudo, String dateDeNaissance, List<User> listAmi) {
+		super(id ,nom, prenom, pseudo, dateDeNaissance, listAmi);
 
 	}
 
@@ -69,35 +71,41 @@ public class Moderateur extends User implements Salarie{
 		
 	}
 	
-/*	@Override
+	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-
-		if (pseudo == null) {
-			if (other.pseudo != null)
-				return false;
 		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof User)) {
+			return false;
+		}
+		User other = (User) obj;
 		if (nom == null) {
-			if (other.nom != null)
+			if (other.nom != null) {
 				return false;
+			}
+		} else if (!nom.equals(other.nom)) {
+			return false;
 		}
 		if (prenom == null) {
-			if (other.prenom != null)
+			if (other.prenom != null) {
 				return false;
-		}
-
-		if (!pseudo.toLowerCase().equals(other.pseudo.toLowerCase()) && !nom.toLowerCase().equals(other.nom.toLowerCase()) && !prenom.toLowerCase().equals(other.prenom.toLowerCase())) {
+			}
+		} else if (!prenom.equals(other.prenom)) {
 			return false;
-			
 		}
-
+		if (pseudo == null) {
+			if (other.pseudo != null) {
+				return false;
+			}
+		} else if (!pseudo.equals(other.pseudo)) {
+			return false;
+		}
 		return true;
-	}*/
+	}
+	
 
 }
