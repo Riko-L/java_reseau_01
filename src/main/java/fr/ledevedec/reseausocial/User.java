@@ -17,17 +17,6 @@ public class User extends Personne {
 	 */
 	protected String pseudo;
 
-	/**
-	 * Tableau contenant la liste des amis Maximum 11 Amis
-	 */
-
-	private List<User> friends = new ArrayList<User>();
-
-	/**
-	 * Tableau contenant la liste des messages Maximum 11 messages
-	 */
-
-	private List<Message> messages = new ArrayList<Message>();
 
 	/**
 	 * Initialisation de d'un utilisateur
@@ -126,76 +115,7 @@ public class User extends Personne {
 		this.pseudo = pseudo;
 	}
 
-	/**
-	 * Obtenir la liste des amis
-	 * 
-	 * @return friends
-	 */
-	public List<User> getFriends() {
-		return friends;
-	}
 
-	/**
-	 * Ajout d'un ami.
-	 *
-	 * @param friend
-	 *            Ami à ajouter
-	 * 
-	 */
-	public void addFriends(User friend) {
-		this.friends.add(friend);
-	}
-
-	public void delFriend(int numeroFriend) {
-		this.friends.remove(numeroFriend);
-
-	}
-
-	/**
-	 * Obtenir la liste des messages
-	 * 
-	 * @return messages
-	 */
-	public List<Message> getMessages() {
-		return messages;
-	}
-
-	/**
-	 * Ajoute un message
-	 * 
-	 * @param message
-	 *            Message pour l'utilisateur
-	 * 
-	 */
-	public void addMessages(Message message) {
-		this.messages.add(message);
-	}
-
-	/**
-	 * @param messages
-	 *            Tableau de messages
-	 */
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
-	}
-
-	/**
-	 * Vide la messagerie de l'utilisateur
-	 * 
-	 */
-	public void viderMessages() {
-		this.setMessages(new ArrayList<Message>());
-	}
-
-	/**
-	 * Supprime un message
-	 * 
-	 * @param nbre
-	 *            Numéro de l'index à supprimer
-	 */
-	public void delMessages(int index) {
-		this.messages.remove(index);
-	}
 
 	/**
 	 * Savoir si l'utilisateur est un modérateur
@@ -221,34 +141,44 @@ public class User extends Personne {
 	}
 
 
-	/*public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
 
-		if (pseudo == null) {
-			if (other.pseudo != null)
-				return false;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
 		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof User)) {
+			return false;
+		}
+		User other = (User) obj;
 		if (nom == null) {
-			if (other.nom != null)
+			if (other.nom != null) {
 				return false;
+			}
+		} else if (!nom.equals(other.nom)) {
+			return false;
 		}
 		if (prenom == null) {
-			if (other.prenom != null)
+			if (other.prenom != null) {
 				return false;
-		}
-
-		if (!pseudo.toLowerCase().equals(other.pseudo.toLowerCase()) && !nom.toLowerCase().equals(other.nom.toLowerCase()) && !prenom.toLowerCase().equals(other.prenom.toLowerCase())) {
+			}
+		} else if (!prenom.equals(other.prenom)) {
 			return false;
-			
 		}
-
+		if (pseudo == null) {
+			if (other.pseudo != null) {
+				return false;
+			}
+		} else if (!pseudo.equals(other.pseudo)) {
+			return false;
+		}
 		return true;
-	}*/
+	}
 
+
+	
+	
 }

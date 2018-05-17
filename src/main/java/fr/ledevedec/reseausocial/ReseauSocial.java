@@ -16,7 +16,6 @@ public class ReseauSocial {
 		scan = new Scanner(System.in);
 		userUtility = new UserUtility(this);
 		messageUtility = new MessageUtility(userUtility);
-		
 
 	}
 
@@ -43,21 +42,15 @@ public class ReseauSocial {
 			} else if (rep == 'C') {
 				System.out
 						.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CONNECTION <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-				System.out.print("Saisissez le nom et prénom de votre utilisateur \" Dupond Jean \" : ");
-				String search = scan.nextLine();
+				System.out.print("Saisissez le Nom de votre utilisateur : ");
+				String searchNom = scan.nextLine();
+				System.out.print("Saisissez le Prénom de votre utilisateur : ");
+				String searchPrenom = scan.nextLine();
 				boolean isPresent = false;
 
-				for (User user : userUtility.getUsers()) {
-					if (user.getFullName().toLowerCase().equals(search.toLowerCase())) {
-						isPresent = true;
-						userUtility.setCurrentUser(user);
-					}
+				isPresent = userUtility.checkLogin(searchNom, searchPrenom);
 
-				}
 				if (isPresent) {
-					userUtility.setCurrentUser(
-							userUtility.getUsers().get(userUtility.getUsers().indexOf(userUtility.getCurrentUser())));
-					userUtility.setCurrentUserIndex(userUtility.getUsers().indexOf(userUtility.getCurrentUser()));
 
 					System.out.println(
 							"*********************************************************************************");

@@ -56,7 +56,7 @@ public class UserUtility {
 			User user = entry.getValue();
 
 			switch (args) {
-			case "ALL": //ok
+			case "ALL": // ok
 
 				if (user == getCurrentUser()) {
 					System.out.println("Utilisateur [" + id + "]*: " + user.getNom() + " | " + user.getPrenom() + " | "
@@ -70,7 +70,7 @@ public class UserUtility {
 				}
 
 				break;
-			case "FULLNAME": //Ok
+			case "FULLNAME": // Ok
 
 				if (user != getCurrentUser()) {
 					System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom());
@@ -78,13 +78,13 @@ public class UserUtility {
 
 				break;
 
-			case "FULLNAME+CURRENT": //Ok
+			case "FULLNAME+CURRENT": // Ok
 
 				System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom());
 
 				break;
 
-			case "MOD":
+			case "MOD": //ok
 
 				if (user.isModerateur()) {
 					System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom()
@@ -178,13 +178,13 @@ public class UserUtility {
 				}
 
 				break;
-			case "FULLNAME-USER-FRIENDS": //OK
+			case "FULLNAME-USER-FRIENDS": // OK
 
 				if (userIndex != id) {
 					System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom());
 
 				}
-				
+
 				break;
 
 			}
@@ -467,7 +467,6 @@ public class UserUtility {
 				list("FULLNAME+CURRENT", Optional.empty());
 				System.out.println("Selectionner l'utilisateur pour lequel vous souhaitez ajouter un ami");
 				numeroProfil = inputClavier.choixClavier();
-				
 
 				System.out.println(
 						"************************************************************************************************");
@@ -527,24 +526,22 @@ public class UserUtility {
 				list("FULLNAME+CURRENT", Optional.empty());
 
 				numeroProfil = inputClavier.choixClavier();
-				
+
 				User selectedUser = bdd.getUserById(numeroProfil);
-				
-				Map<Integer, User> friends =  bdd.getFriend(numeroProfil);
-				System.out.println("voici les amis de l'utilisateur " + selectedUser.getFullName() );
-				System.out.println(
-						"*********************************************************************************");
-			
-					for(Map.Entry<Integer, User> friend : friends.entrySet()) {
-						
-						User user = friend.getValue();
-						int id = friend.getKey();
-						System.out.println("Ami [" + id + "] : " + user.getFullName());
-					
-	
+
+				Map<Integer, User> friends = bdd.getFriend(numeroProfil);
+				System.out.println("voici les amis de l'utilisateur " + selectedUser.getFullName());
+				System.out.println("*********************************************************************************");
+
+				for (Map.Entry<Integer, User> friend : friends.entrySet()) {
+
+					User user = friend.getValue();
+					int id = friend.getKey();
+					System.out.println("Ami [" + id + "] : " + user.getFullName());
+
 					System.out.println(
 							"*********************************************************************************");
-					}
+				}
 				reponse = ' ';
 
 				while (reponse != 'P' && reponse != 'O') {
@@ -559,21 +556,18 @@ public class UserUtility {
 			System.out.println("******************************* AFFICHER AMIS ***********************************");
 			System.out.println("*********************************************************************************");
 
-			Map<Integer, User> friends =  bdd.getFriend(getCurrentUserIndex());
-			System.out.println("voici les amis de l'utilisateur " + getCurrentUser().getFullName() );
-			System.out.println(
-					"*********************************************************************************");
-		
-				for(Map.Entry<Integer, User> friend : friends.entrySet()) {
-					
-					User user = friend.getValue();
-					int id = friend.getKey();
-					System.out.println("Ami [" + id + "] : " + user.getFullName());
-				
+			Map<Integer, User> friends = bdd.getFriend(getCurrentUserIndex());
+			System.out.println("voici les amis de l'utilisateur " + getCurrentUser().getFullName());
+			System.out.println("*********************************************************************************");
 
-				System.out.println(
-						"*********************************************************************************");
-				}
+			for (Map.Entry<Integer, User> friend : friends.entrySet()) {
+
+				User user = friend.getValue();
+				int id = friend.getKey();
+				System.out.println("Ami [" + id + "] : " + user.getFullName());
+
+				System.out.println("*********************************************************************************");
+			}
 			System.out.println("*********************************************************************************");
 		}
 	}
@@ -590,34 +584,29 @@ public class UserUtility {
 
 				numeroProfil = inputClavier.choixClavier();
 				User selectedUser = bdd.getUserById(numeroProfil);
-								
-					System.out.println("voici les amis de l'utilisateur " + selectedUser.getFullName());
-					System.out.println(
-							"*********************************************************************************");
-					
-					Map<Integer, User> friends =  bdd.getFriend(numeroProfil);					
-					for(Map.Entry<Integer, User> friend : friends.entrySet()) {
-						
-						User user = friend.getValue();
-						int id = friend.getKey();
-						System.out.println("Ami [" + id + "] : " + user.getFullName());
-					
+
+				System.out.println("voici les amis de l'utilisateur " + selectedUser.getFullName());
+				System.out.println("*********************************************************************************");
+
+				Map<Integer, User> friends = bdd.getFriend(numeroProfil);
+				for (Map.Entry<Integer, User> friend : friends.entrySet()) {
+
+					User user = friend.getValue();
+					int id = friend.getKey();
+					System.out.println("Ami [" + id + "] : " + user.getFullName());
 
 					System.out.println(
 							"*********************************************************************************");
-					}
-					
-					System.out.println(
-							"*********************************************************************************");
-			
+				}
+
+				System.out.println("*********************************************************************************");
+
 				numeroFriend = inputClavier.choixClavier();
 
 				bdd.delFriend(numeroFriend);
-				
 
 				System.out.println("Votre ami à été supprimé");
-			
-			
+
 				reponse = ' ';
 
 				while (reponse != 'P' && reponse != 'O') {
@@ -626,35 +615,30 @@ public class UserUtility {
 					reponse = scan.nextLine().charAt(0);
 				}
 			}
-				}else {
+		} else {
 			System.out.println("******************************* EFFACER AMIS ***********************************");
 			System.out.println("*********************************************************************************");
 
-			Map<Integer, User> friends =  bdd.getFriend(getCurrentUserIndex());
-			System.out.println("voici les amis de l'utilisateur " + getCurrentUser().getFullName() );
-			System.out.println(
-					"*********************************************************************************");
-		
-				for(Map.Entry<Integer, User> friend : friends.entrySet()) {
-					
-					User user = friend.getValue();
-					int id = friend.getKey();
-					System.out.println("Ami [" + id + "] : " + user.getFullName());
-				
-
-				System.out.println(
-						"*********************************************************************************");
-				
-
-			numeroFriend = inputClavier.choixClavier();
-
-			bdd.delFriend(numeroFriend);
-			
-
-			System.out.println("Votre ami à été supprimé");
-
+			Map<Integer, User> friends = bdd.getFriend(getCurrentUserIndex());
+			System.out.println("voici les amis de l'utilisateur " + getCurrentUser().getFullName());
 			System.out.println("*********************************************************************************");
-				}
+
+			for (Map.Entry<Integer, User> friend : friends.entrySet()) {
+
+				User user = friend.getValue();
+				int id = friend.getKey();
+				System.out.println("Ami [" + id + "] : " + user.getFullName());
+
+				System.out.println("*********************************************************************************");
+
+				numeroFriend = inputClavier.choixClavier();
+
+				bdd.delFriend(numeroFriend);
+
+				System.out.println("Votre ami à été supprimé");
+
+				System.out.println("*********************************************************************************");
+			}
 		}
 	}
 
@@ -779,4 +763,25 @@ public class UserUtility {
 	public void setCurrentUserIndex(int currentUserIndex) {
 		this.currentUserIndex = currentUserIndex;
 	}
+
+	public boolean checkLogin(String InNom , String InPrenom ) {
+		
+		Entry<Integer, User> selectedUser = null;
+		
+		boolean login = false;
+		
+		selectedUser= bdd.getUserFromBdd(InNom, InPrenom);
+		
+		if(selectedUser != null) {
+			
+			setCurrentUser(selectedUser.getValue());
+			setCurrentUserIndex(selectedUser.getKey());
+			login =  true;
+		}else {
+			login = false;
+		}
+			
+		return login;
+	}
+
 }

@@ -131,48 +131,56 @@ public class MysqlAccess {
 			affiche(e.getMessage());
 		}
 	}
-	
-	
-	
 
 	public Map.Entry<Integer, User> getUserFromBdd(String InNom, String InPrenom) {
 		User user = null;
 		Map<Integer, User> tempUser = new HashMap<Integer, User>();
+		Map.Entry<Integer, User> entry = null;
 		try {
 			PreparedStatement showUser = connect
 					.prepareStatement("SELECT *  from javatesting.user WHERE nom= ? AND prenom= ?");
 			showUser.setString(1, InNom);
 			showUser.setString(2, InPrenom);
 			resultSet = showUser.executeQuery();
+			
+			
+			if(resultSet.next() == false) {
+				
+				entry = null;
+				
+			}else {
+				
+			
+				 do {
 
-			while (resultSet.next()) {
+					int id = resultSet.getInt("id");
+					String nom = resultSet.getString("nom");
+					String prenom = resultSet.getString("prenom");
+					String pseudo = resultSet.getString("pseudo");
+					String anneenaissance = resultSet.getString("anneenaissance");
+					Boolean ismod = resultSet.getBoolean("ismod");
+					int level = resultSet.getInt("level");
 
-				int id = resultSet.getInt("id");
-				String nom = resultSet.getString("nom");
-				String prenom = resultSet.getString("prenom");
-				String pseudo = resultSet.getString("pseudo");
-				String anneenaissance = resultSet.getString("anneenaissance");
-				Boolean ismod = resultSet.getBoolean("ismod");
-				int level = resultSet.getInt("level");
+					if (ismod) {
 
-				if (ismod) {
+						user = new Moderateur(nom, prenom, pseudo, anneenaissance);
+						((Moderateur) user).setNiveau(level);
 
-					user = new Moderateur(nom, prenom, pseudo, anneenaissance);
-					((Moderateur) user).setNiveau(level);
+						tempUser.put(id, user);
+					} else if (!ismod) {
 
-					tempUser.put(id, user);
-				} else if (!ismod) {
-
-					user = new User(nom, prenom, pseudo, anneenaissance);
-					tempUser.put(id, user);
-				}
+						user = new User(nom, prenom, pseudo, anneenaissance);
+						tempUser.put(id, user);
+					}
+				
+				entry = tempUser.entrySet().iterator().next();
+				 }while (resultSet.next());
 			}
 
 		} catch (SQLException e) {
 			affiche(e.getMessage());
 		}
 
-		Map.Entry<Integer, User> entry = tempUser.entrySet().iterator().next();
 		return entry;
 
 	}
@@ -242,32 +250,28 @@ public class MysqlAccess {
 		return user;
 	}
 
-	
-	public void addfriend(int id_user, int id_ami ) {
-		
+	public void addfriend(int id_user, int id_ami) {
+
 		try {
 			PreparedStatement addfriend = connect
 					.prepareStatement("insert into javatesting.ami (id_user, id_ami) values (?, ?)");
 
 			addfriend.setInt(1, id_user);
 			addfriend.setInt(2, id_ami);
-			
+
 			addfriend.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 			affiche(e.getMessage());
 		}
-		
+
 	}
-	
+
 	public void delFriend(int id_ami) {
 		try {
-			PreparedStatement delfriend = connect
-					.prepareStatement("DELETE"
-							+ " FROM ami"
-							+ " WHERE ami.id_ami= ?");
-			
+			PreparedStatement delfriend = connect.prepareStatement("DELETE" + " FROM ami" + " WHERE ami.id_ami= ?");
+
 			delfriend.setInt(1, id_ami);
 			delfriend.executeUpdate();
 
@@ -275,16 +279,15 @@ public class MysqlAccess {
 			e.printStackTrace();
 			affiche(e.getMessage());
 		}
-		
+
 	}
-	
+
 	public Map<Integer, User> getFriend(int id_user) {
 		Map<Integer, User> tempList = new HashMap<Integer, User>();
 		User user = null;
 		try {
 			PreparedStatement getFriend = connect.prepareStatement("SELECT * FROM javatesting.ami"
-					+ " INNER JOIN javatesting.user ON ami.id_ami = user.id "
-					+ " WHERE ami.id_user = ?");
+					+ " INNER JOIN javatesting.user ON ami.id_ami = user.id " + " WHERE ami.id_user = ?");
 			getFriend.setInt(1, id_user);
 			resultSet = getFriend.executeQuery();
 
@@ -316,10 +319,9 @@ public class MysqlAccess {
 		}
 
 		return tempList;
-		
+
 	}
-	
-	
+
 	private void writeMetaData(ResultSet resultSet) throws SQLException {
 		// Now get some metadata from the database
 		// Result set get the result of the SQL query
@@ -341,11 +343,6 @@ public class MysqlAccess {
 
 	}
 
-	
-	
-	
-	
-	
 	private void close() {
 		try {
 			if (resultSet != null) {
