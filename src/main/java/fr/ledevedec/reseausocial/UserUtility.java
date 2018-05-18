@@ -1,5 +1,6 @@
 package fr.ledevedec.reseausocial;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,18 +18,18 @@ public class UserUtility {
 	private Moderateur mod;
 	private ReseauSocial reseau;
 	private User currentUser;
-	private int currentUserIndex;
+	private long currentUserIndex;
 	private SubMenuUpdateUser subMenu;
 
 	private char reponse = 'O';
-	private int numeroProfil;
-	private int numeroFriend;
+	private long numeroProfil;
+	private long numeroFriend;
 
 	// private List<User> users = new ArrayList<User>();
 
 	private InputClavierUtility inputClavier;
 	private Scanner scan;
-	private MysqlAccess bdd;
+	private UserDAO userDao;
 
 	private String nom;
 	private String prenom;
@@ -37,35 +38,33 @@ public class UserUtility {
 
 	public UserUtility(ReseauSocial reseau) {
 		this.reseau = reseau;
-		bdd = new MysqlAccess();
+		userDao = new UserDAO();
 		inputClavier = new InputClavierUtility();
 		subMenu = new SubMenuUpdateUser();
 		scan = new Scanner(System.in);
 
 	}
 
-	public boolean list(String args, Optional<Integer> index) {
-		Integer userIndex = index.isPresent() ? index.get() : null;
+	public boolean list(String args, Optional<Long> index) {
+		Long userIndex = index.isPresent() ? index.get() : null;
 		boolean result = false;
+		List<User> users = null;
 
-		Map<Integer, User> users = bdd.getAllUser();
+		users = userDao.getAllUser();
 
-		for (Entry<Integer, User> entry : users.entrySet()) {
-
-			int id = entry.getKey();
-			User user = entry.getValue();
+		for (User user : users) {
 
 			switch (args) {
 			case "ALL": // ok
 
 				if (user == getCurrentUser()) {
-					System.out.println("Utilisateur [" + id + "]*: " + user.getNom() + " | " + user.getPrenom() + " | "
-							+ user.getDateDeNaissance() + " | " + user.getPseudo() + " | " + user.isModerateur() + " | "
-							+ user.getNiveau());
+					System.out.println("Utilisateur [" + user.getId() + "]*: " + user.getNom() + " | "
+							+ user.getPrenom() + " | " + user.getDateDeNaissance() + " | " + user.getPseudo() + " | "
+							+ user.isModerateur() + " | " + user.getNiveau());
 				} else if (user != getCurrentUser()) {
-					System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " | " + user.getPrenom() + " | "
-							+ user.getDateDeNaissance() + " | " + user.getPseudo() + " | " + user.isModerateur() + " | "
-							+ user.getNiveau());
+					System.out.println("Utilisateur [" + user.getId() + "] : " + user.getNom() + " | "
+							+ user.getPrenom() + " | " + user.getDateDeNaissance() + " | " + user.getPseudo() + " | "
+							+ user.isModerateur() + " | " + user.getNiveau());
 
 				}
 
@@ -73,115 +72,101 @@ public class UserUtility {
 			case "FULLNAME": // Ok
 
 				if (user != getCurrentUser()) {
-					System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom());
+					System.out
+							.println("Utilisateur [" + user.getId() + "] : " + user.getNom() + " " + user.getPrenom());
 				}
 
 				break;
 
 			case "FULLNAME+CURRENT": // Ok
 
-				System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom());
+				System.out.println("Utilisateur [" + user.getId() + "] : " + user.getNom() + " " + user.getPrenom());
 
 				break;
 
-			case "MOD": //ok
+			case "MOD": // ok
 
 				if (user.isModerateur()) {
-					System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom()
+					System.out.println("Utilisateur [" + user.getId() + "] : " + user.getNom() + " " + user.getPrenom()
 							+ " | Niveau de modération : " + user.getNiveau());
 				}
 
 				break;
-			case "FULLNAME+NB-MESSAGE":
-				for (int i = 0, nbmsg = 0; i < users.size(); i++) {
-					if (!users.isEmpty()) { // ajouter !users.get(i).getMessages().isEmpty() pour lister juste les
-											// utilisateurs avec des messages
-
-						for (int m = 0; m < users.get(i).getMessages().size(); m++) {
-							if (!users.get(i).getMessages().isEmpty()) {
-								nbmsg++;
-							}
-						}
-						System.out.println("Utilisateur [" + i + "] : " + users.get(i).getNom() + " "
-								+ users.get(i).getPrenom() + " | Nombre de messages : [" + nbmsg + "]");
-						nbmsg = 0;
-					}
-				}
-				break;
 
 			case "MESSAGE":
-				if (userIndex != null && users.containsValue(users.get(userIndex))) {
-					if (!users.get(userIndex).getMessages().isEmpty()) {
-						for (int i = 0; i < users.get(userIndex).getMessages().size(); i++) {
-							System.out.println(" Message  [" + i + "] : ");
-							System.out.println(
-									" 	From : \"" + users.get(userIndex).getMessages().get(i).getExpediteur() + "\"");
-							System.out.println(
-									" 	To : \"" + users.get(userIndex).getMessages().get(i).getDestinataire() + "\"");
-							System.out.println(
-									" 	Contenu : \"" + users.get(userIndex).getMessages().get(i).getContenu() + "\"");
-							System.out.println("***************");
-						}
-					} else {
-						System.out.println("Messagerie vide");
-						result = true;
 
-					}
-				}
-
-				break;
-
-			case "MESSAGE_ENVOYE":
-				if (userIndex != null && users.containsValue(users.get(userIndex))) {
-					int nbre = 0;
-					for (int i = 0; i < users.size(); i++) {
-
-						if (users.get(i) != null) {
-
-							for (int j = 0; j < users.get(i).getMessages().size(); j++) {
-								if (users.get(i).getMessages() != null) {
-
-									if (users.get(i).getMessages().get(j).getExpediteur()
-											.contains(users.get(userIndex).getFullName())) {
-										nbre += 1;
-										System.out.println(users.get(i).getFullName());
-										System.out.println(" Message  [" + j + "] : ");
-
-										System.out.println(" 	To : \""
-												+ users.get(i).getMessages().get(j).getDestinataire() + "\"");
-										System.out.println(" 	Contenu : \""
-												+ users.get(i).getMessages().get(j).getContenu() + "\"");
-										System.out.println("***************");
-									}
-								}
-							}
-						}
-
-					}
-
-					System.out.println("Vous avez envoyé " + nbre + " messages");
+					for (Message msg : user.getMessages()) {
+							System.out.println("Message de :" + users.get((int)(msg.getDestinataire())) );
+							System.out.println("From :" + users.get((int)(msg.getExpediteur())) );
+							System.out.println("Contenu :" + msg.getContenu() );
+					
 
 				}
-
 				break;
+
+			/*
+			 * case "MESSAGE": if (userIndex != null &&
+			 * users.containsValue(users.get(userIndex))) { if
+			 * (!users.get(userIndex).getMessages().isEmpty()) { for (int i = 0; i <
+			 * users.get(userIndex).getMessages().size(); i++) {
+			 * System.out.println(" Message  [" + i + "] : "); System.out.println(
+			 * " 	From : \"" + users.get(userIndex).getMessages().get(i).getExpediteur() +
+			 * "\""); System.out.println( " 	To : \"" +
+			 * users.get(userIndex).getMessages().get(i).getDestinataire() + "\"");
+			 * System.out.println( " 	Contenu : \"" +
+			 * users.get(userIndex).getMessages().get(i).getContenu() + "\"");
+			 * System.out.println("***************"); } } else {
+			 * System.out.println("Messagerie vide"); result = true;
+			 * 
+			 * } }
+			 * 
+			 * break;
+			 * 
+			 * case "MESSAGE_ENVOYE": if (userIndex != null &&
+			 * users.containsValue(users.get(userIndex))) { int nbre = 0; for (int i = 0; i
+			 * < users.size(); i++) {
+			 * 
+			 * if (users.get(i) != null) {
+			 * 
+			 * for (int j = 0; j < users.get(i).getMessages().size(); j++) { if
+			 * (users.get(i).getMessages() != null) {
+			 * 
+			 * if (users.get(i).getMessages().get(j).getExpediteur()
+			 * .contains(users.get(userIndex).getFullName())) { nbre += 1;
+			 * System.out.println(users.get(i).getFullName());
+			 * System.out.println(" Message  [" + j + "] : ");
+			 * 
+			 * System.out.println(" 	To : \"" +
+			 * users.get(i).getMessages().get(j).getDestinataire() + "\"");
+			 * System.out.println(" 	Contenu : \"" +
+			 * users.get(i).getMessages().get(j).getContenu() + "\"");
+			 * System.out.println("***************"); } } } }
+			 * 
+			 * }
+			 * 
+			 * System.out.println("Vous avez envoyé " + nbre + " messages");
+			 * 
+			 * }
+			 * 
+			 * break;
+			 */
 
 			case "FRIENDS":
-				if (userIndex != null && users.containsValue(users.get(userIndex))) {
 
-					for (int i = 0; i < users.get(userIndex).getFriends().size(); i++) {
-						if (!users.get(userIndex).getFriends().isEmpty()) {
+				if (user.getId() == userIndex) {
+					for (User ami : user.getListAmi()) {
 
-							System.out.println("Ami [" + i + "] : " + users.get(userIndex).getFriends().get(i).getNom()
-									+ " " + users.get(userIndex).getFriends().get(i).getPrenom());
-						}
+						System.out.println("Ami [" + ami.getId() + "] : " + ami.getFullName());
+
 					}
 				}
-
 				break;
+
 			case "FULLNAME-USER-FRIENDS": // OK
 
-				if (userIndex != id) {
-					System.out.println("Utilisateur [" + id + "] : " + user.getNom() + " " + user.getPrenom());
+				if (user.listAmi.contains(currentUser)) {
+					System.out
+							.println("Utilisateur [" + user.getId() + "] : " + user.getNom() + " " + user.getPrenom());
 
 				}
 
@@ -201,7 +186,7 @@ public class UserUtility {
 		list("MOD", Optional.empty());
 
 		numeroProfil = inputClavier.choixClavier();
-		User selectedUser = bdd.getUserById(numeroProfil);
+		User selectedUser = userDao.find(numeroProfil);
 		if (selectedUser != null && selectedUser instanceof Moderateur) {
 
 			System.out.println("Entrer le niveau à attribuer : [1] - [2]");
@@ -228,31 +213,35 @@ public class UserUtility {
 	}
 
 	public void generateUsers() {
+
 		System.out.println("********************* GENERATION >> UTILISATEUR | MODERATEUR **********************");
 		System.out.println("***********************************************************************************");
 
-		mod = new Moderateur("LE DEVEDEC", "Eric", "riko74", "1982");
-		mod.setNiveau(2);
-		bdd.addUserToBdd(mod);
-		user = new User("BIAGI", "Alexandre", "BigBoy", "1968");
-		bdd.addUserToBdd(user);
-		user = new User("DUPON", "Jean", "The Cat", "1945");
-		bdd.addUserToBdd(user);
-		user = new User("PIG", "Peppa", "Petit cochon", "1999");
-		bdd.addUserToBdd(user);
-		user = new User("BOND", "Jams", "251Hys", "1765");
-		bdd.addUserToBdd(user);
-		user = new User("PIGNION", "François", "PF2008", "2008");
-		bdd.addUserToBdd(user);
-		mod = new Moderateur("FILLION", "Charles", "Fcha74", "1972");
-		mod.setNiveau(1);
-		bdd.addUserToBdd(mod);
+		try {
+			mod = new Moderateur("LE DEVEDEC", "Eric", "riko74", "1982");
+			mod.setNiveau(2);
+			currentUser = userDao.create(mod);
+			currentUserIndex = currentUser.getId();
 
-		// bdd.getUserFromBdd("LE DEVEDEC" ,"Eric");
-		currentUser = bdd.getUserFromBdd("LE DEVEDEC", "Eric").getValue();
-		currentUserIndex = bdd.getUserFromBdd("LE DEVEDEC", "Eric").getKey();
+			user = new User("BIAGI", "Alexandre", "BigBoy", "1968");
+			userDao.create(user);
+			user = new User("DUPON", "Jean", "The Cat", "1945");
+			userDao.create(user);
+			user = new User("PIG", "Peppa", "Petit cochon", "1999");
+			userDao.create(user);
+			user = new User("BOND", "Jams", "251Hys", "1765");
+			userDao.create(user);
+			user = new User("PIGNION", "François", "PF2008", "2008");
+			userDao.create(user);
+			mod = new Moderateur("FILLION", "Charles", "Fcha74", "1972");
+			mod.setNiveau(1);
+			userDao.create(mod);
+		} catch (SQLException e) {
+
+		}
+
 		System.out.println("Génération terminé");
-		// System.out.println("Nombre d'utilisateurs créer : " + users.size());
+
 		System.out.println("***********************************************************************************");
 
 	}
@@ -290,11 +279,12 @@ public class UserUtility {
 			int choix = inputClavier.choixClavier();
 			mod = new Moderateur(nom, prenom, pseudo, anneeNaissance);
 			mod.setNiveau(choix);
+			try {
+				userDao.create(mod);
+			} catch (SQLException e) {
 
-			// users.add(mod);
-			bdd.addUserToBdd(mod);
-			// setCurrentUser(users.get(users.indexOf(mod)));
-			// setCurrentUserIndex(users.indexOf(mod));
+				e.printStackTrace();
+			}
 
 			System.out.println("\"Modérateur Créer\"");
 			System.out.println("***********************************************************************************");
@@ -305,11 +295,15 @@ public class UserUtility {
 
 			user = new User(nom, prenom, pseudo, anneeNaissance);
 
-			// users.add(user);
-			bdd.addUserToBdd(user);
+			try {
+				user = userDao.create(user);
 
-			// setCurrentUser(users.get(users.indexOf(user)));
-			// setCurrentUserIndex(users.indexOf(user));
+			} catch (SQLException e) {
+
+				e.printStackTrace();
+			}
+			setCurrentUser(user);
+			setCurrentUserIndex(user.getId());
 
 			System.out.println("\"Utilisateur Créer\"");
 			System.out.println("***********************************************************************************");
@@ -325,7 +319,7 @@ public class UserUtility {
 			list("FULLNAME+CURRENT", Optional.empty());
 
 			numeroProfil = inputClavier.choixClavier();
-			User selectedUser = bdd.getUserById(numeroProfil);
+			User selectedUser = userDao.find(numeroProfil);
 			if (selectedUser != null) {
 
 				System.out.println(">>>>>>>>>>>>>>>>>>>>     Voici les informations    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -361,7 +355,7 @@ public class UserUtility {
 			list("FULLNAME+CURRENT", Optional.empty());
 
 			numeroProfil = inputClavier.choixClavier();
-			User selectedUser = bdd.getUserById(numeroProfil);
+			User selectedUser = userDao.find(numeroProfil);
 			reponse = 'O';
 
 			System.out.println("*********************************************************************************");
@@ -392,7 +386,8 @@ public class UserUtility {
 
 					break;
 				case 3:
-					bdd.updateUser(selectedUser, numeroProfil);
+					userDao.update(selectedUser);
+
 					System.out.println("Enregistrer");
 					System.out.println(
 							">>>>>>>>>>>>>>>>>>>>     Voici les nouvelles informations    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -414,44 +409,48 @@ public class UserUtility {
 			System.out.println("Modification de " + getCurrentUser().getNom() + " " + getCurrentUser().getPrenom());
 			System.out.println("*********************************************************************************");
 
-			subMenu.createMenu();
+			while (reponse == 'O') {
+				subMenu.createMenu();
 
-			switch (subMenu.getChoixUser()) {
-			case 0:
-				System.out.print("Entrer Nom:");
-				updateInfo = scan.nextLine();
-				getCurrentUser().setNom(updateInfo);
+				switch (subMenu.getChoixUser()) {
+				case 0:
+					System.out.print("Entrer Nom:");
+					updateInfo = scan.nextLine();
+					getCurrentUser().setNom(updateInfo);
 
-				break;
-			case 1:
-				System.out.print("Entrer Prénom:");
-				updateInfo = scan.nextLine();
-				getCurrentUser().setPrenom(updateInfo);
+					break;
+				case 1:
+					System.out.print("Entrer Prénom:");
+					updateInfo = scan.nextLine();
+					getCurrentUser().setPrenom(updateInfo);
 
-				break;
-			case 2:
-				System.out.print("Entrer Année de naissance:");
-				updateInfo = scan.nextLine();
-				getCurrentUser().setDateDeNaissance(updateInfo);
+					break;
+				case 2:
+					System.out.print("Entrer Année de naissance:");
+					updateInfo = scan.nextLine();
+					getCurrentUser().setDateDeNaissance(updateInfo);
 
-				break;
+					break;
 
-			case 3:
+				case 3:
 
-				bdd.updateUser(getCurrentUser(), getCurrentUserIndex());
-				System.out.println("Enregistrer");
-				System.out.println(
-						">>>>>>>>>>>>>>>>>>>>     Voici les nouvelles informations    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-				System.out.println(
-						"*******************************************************************************************");
-				System.out.println("* Nom : " + getCurrentUser().getNom());
-				System.out.println("* Prénom : " + getCurrentUser().getPrenom());
-				System.out.println("* Année de naissance : " + getCurrentUser().getDateDeNaissance());
-				System.out.println(
-						"*******************************************************************************************");
-				break;
-			case 4:
-				reponse = ' ';
+					userDao.update(getCurrentUser());
+
+					System.out.println("Enregistrer");
+					System.out.println(
+							">>>>>>>>>>>>>>>>>>>>     Voici les nouvelles informations    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+					System.out.println(
+							"*******************************************************************************************");
+					System.out.println("* Nom : " + getCurrentUser().getNom());
+					System.out.println("* Prénom : " + getCurrentUser().getPrenom());
+					System.out.println("* Année de naissance : " + getCurrentUser().getDateDeNaissance());
+					System.out.println(
+							"*******************************************************************************************");
+					break;
+				case 4:
+					reponse = ' ';
+					break;
+				}
 			}
 		}
 	}
@@ -477,8 +476,8 @@ public class UserUtility {
 
 				numeroFriend = inputClavier.choixClavier();
 
-				bdd.addfriend(numeroProfil, numeroFriend);
-				bdd.addfriend(numeroFriend, numeroProfil);
+				userDao.addfriend(userDao.find(numeroProfil), userDao.find(numeroFriend));
+				userDao.addfriend(userDao.find(numeroFriend), userDao.find(numeroProfil));
 
 				System.out.println(
 						"************************************************************************************************");
@@ -505,8 +504,8 @@ public class UserUtility {
 
 			numeroFriend = inputClavier.choixClavier();
 
-			bdd.addfriend(getCurrentUserIndex(), numeroFriend);
-			bdd.addfriend(numeroFriend, getCurrentUserIndex());
+			userDao.addfriend(getCurrentUser(), userDao.find(numeroFriend));
+			userDao.addfriend(userDao.find(numeroFriend), getCurrentUser());
 
 			System.out.println("*********************************************************************************");
 			System.out.println("Ami bien été ajouté");
@@ -527,21 +526,12 @@ public class UserUtility {
 
 				numeroProfil = inputClavier.choixClavier();
 
-				User selectedUser = bdd.getUserById(numeroProfil);
+				User selectedUser = userDao.find(numeroProfil);
 
-				Map<Integer, User> friends = bdd.getFriend(numeroProfil);
 				System.out.println("voici les amis de l'utilisateur " + selectedUser.getFullName());
 				System.out.println("*********************************************************************************");
 
-				for (Map.Entry<Integer, User> friend : friends.entrySet()) {
-
-					User user = friend.getValue();
-					int id = friend.getKey();
-					System.out.println("Ami [" + id + "] : " + user.getFullName());
-
-					System.out.println(
-							"*********************************************************************************");
-				}
+				list("FRIENDS", Optional.of(numeroProfil));
 				reponse = ' ';
 
 				while (reponse != 'P' && reponse != 'O') {
@@ -556,18 +546,10 @@ public class UserUtility {
 			System.out.println("******************************* AFFICHER AMIS ***********************************");
 			System.out.println("*********************************************************************************");
 
-			Map<Integer, User> friends = bdd.getFriend(getCurrentUserIndex());
 			System.out.println("voici les amis de l'utilisateur " + getCurrentUser().getFullName());
 			System.out.println("*********************************************************************************");
+			list("FRIENDS", Optional.of(getCurrentUserIndex()));
 
-			for (Map.Entry<Integer, User> friend : friends.entrySet()) {
-
-				User user = friend.getValue();
-				int id = friend.getKey();
-				System.out.println("Ami [" + id + "] : " + user.getFullName());
-
-				System.out.println("*********************************************************************************");
-			}
 			System.out.println("*********************************************************************************");
 		}
 	}
@@ -583,27 +565,18 @@ public class UserUtility {
 				list("FULLNAME+CURRENT", Optional.empty());
 
 				numeroProfil = inputClavier.choixClavier();
-				User selectedUser = bdd.getUserById(numeroProfil);
+				User selectedUser = userDao.find(numeroProfil);
 
 				System.out.println("voici les amis de l'utilisateur " + selectedUser.getFullName());
 				System.out.println("*********************************************************************************");
 
-				Map<Integer, User> friends = bdd.getFriend(numeroProfil);
-				for (Map.Entry<Integer, User> friend : friends.entrySet()) {
-
-					User user = friend.getValue();
-					int id = friend.getKey();
-					System.out.println("Ami [" + id + "] : " + user.getFullName());
-
-					System.out.println(
-							"*********************************************************************************");
-				}
+				list("FRIENDS", Optional.of(numeroProfil));
 
 				System.out.println("*********************************************************************************");
 
 				numeroFriend = inputClavier.choixClavier();
-
-				bdd.delFriend(numeroFriend);
+				User ami = userDao.find(numeroProfil);
+				userDao.delFriend(ami);
 
 				System.out.println("Votre ami à été supprimé");
 
@@ -619,55 +592,50 @@ public class UserUtility {
 			System.out.println("******************************* EFFACER AMIS ***********************************");
 			System.out.println("*********************************************************************************");
 
-			Map<Integer, User> friends = bdd.getFriend(getCurrentUserIndex());
 			System.out.println("voici les amis de l'utilisateur " + getCurrentUser().getFullName());
 			System.out.println("*********************************************************************************");
+			list("FRIENDS", Optional.of(getCurrentUserIndex()));
+			numeroFriend = inputClavier.choixClavier();
+			User ami = userDao.find(numeroProfil);
+			userDao.delFriend(ami);
 
-			for (Map.Entry<Integer, User> friend : friends.entrySet()) {
+			System.out.println("Votre ami à été supprimé");
 
-				User user = friend.getValue();
-				int id = friend.getKey();
-				System.out.println("Ami [" + id + "] : " + user.getFullName());
-
-				System.out.println("*********************************************************************************");
-
-				numeroFriend = inputClavier.choixClavier();
-
-				bdd.delFriend(numeroFriend);
-
-				System.out.println("Votre ami à été supprimé");
-
-				System.out.println("*********************************************************************************");
-			}
+			System.out.println("*********************************************************************************");
 		}
+
 	}
 
 	public void search() {
 		System.out.println("******************************* RECHERCHE UTILISATEUR ***********************************");
 		System.out.println("*****************************************************************************************");
-		System.out.println("Rechercher un utilisateur par \" Nom - Prénom - Pseudo : \"");
+		System.out.println("Rechercher un utilisateur par \" Nom et Prénom \" : ");
 
-		Map<Integer, User> users = bdd.getAllUser();
-		String search = scan.nextLine();
+		System.out.println("NON de l'utilisateur :");
+		String nomS = scan.nextLine();
+		System.out.println("PRENON de l'utilisateur :");
+		String prenomS = scan.nextLine();
 
-		for (Map.Entry<Integer, User> entry : users.entrySet()) {
+		User user = new User();
+		user.setNom(nomS);
+		user.setPrenom(prenomS);
 
-			int id = entry.getKey();
-			User user = entry.getValue();
+		user = userDao.find(user);
 
-			if (user.getNom().equals(search) || user.getPrenom().equals(search)) {
-				System.out.println(
-						"*****************************************************************************************");
-				System.out.println("L'utilisateur \"" + user.getFullName() + "\" avec l'ID [" + id
-						+ "] corresponds à votre recherhe");
+		if (user != null) {
+			System.out.println(
+					"*****************************************************************************************");
+			System.out.println("L'utilisateur \"" + user.getFullName() + "\" avec l'ID [" + user.getId()
+					+ "] corresponds à votre recherhe");
 
-				// if (getCurrentUser().getFriends().contains(searchList.get(i))) {
-				// System.out.println("Vous êtes déjà ami avec cet utilisateur");
-				// }
-				System.out.println(
-						"*****************************************************************************************");
-			}
+			// if (getCurrentUser().getFriends().contains(searchList.get(i))) {
+			// System.out.println("Vous êtes déjà ami avec cet utilisateur");
+			// }
+			System.out.println(
+					"*****************************************************************************************");
 		}
+
+		System.out.println("Utilisateur non trouvé");
 
 	}
 
@@ -679,8 +647,8 @@ public class UserUtility {
 					"*****************************************************************************************");
 
 			list("FULLNAME", Optional.empty());
-			int choix = inputClavier.choixClavier();
-			bdd.delUser(choix);
+			long choix = inputClavier.choixClavier();
+			userDao.delete(choix);
 
 			System.out.println(
 					"*****************************************************************************************");
@@ -717,8 +685,9 @@ public class UserUtility {
 		System.out.println(
 				"Voici une liste d'utilisateurs. Entrer un numéro pour le choisir comme utilisateur principal");
 
-		int choix = inputClavier.choixClavier();
-		setCurrentUser(bdd.getUserById(choix));
+		long choix = inputClavier.choixClavier();
+		User user = userDao.find(choix);
+		setCurrentUser(user);
 		setCurrentUserIndex(choix);
 		System.out.println(
 				"************************************************************************************************");
@@ -756,31 +725,34 @@ public class UserUtility {
 		this.currentUser = currentUser;
 	}
 
-	public int getCurrentUserIndex() {
+	public long getCurrentUserIndex() {
 		return currentUserIndex;
 	}
 
-	public void setCurrentUserIndex(int currentUserIndex) {
-		this.currentUserIndex = currentUserIndex;
+	public void setCurrentUserIndex(long l) {
+		this.currentUserIndex = l;
 	}
 
-	public boolean checkLogin(String InNom , String InPrenom ) {
-		
-		Entry<Integer, User> selectedUser = null;
-		
+	public boolean checkLogin(String InNom, String InPrenom) {
+
 		boolean login = false;
-		
-		selectedUser= bdd.getUserFromBdd(InNom, InPrenom);
-		
-		if(selectedUser != null) {
-			
-			setCurrentUser(selectedUser.getValue());
-			setCurrentUserIndex(selectedUser.getKey());
-			login =  true;
-		}else {
+
+		User user = new User();
+
+		user.setNom(InNom);
+		user.setPrenom(InPrenom);
+
+		User selectedUser = userDao.find(user);
+
+		if (selectedUser != null) {
+
+			setCurrentUser(selectedUser);
+			setCurrentUserIndex(selectedUser.getId());
+			login = true;
+		} else {
 			login = false;
 		}
-			
+
 		return login;
 	}
 

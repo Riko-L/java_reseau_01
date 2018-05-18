@@ -17,12 +17,13 @@ public class User extends Personne {
 	 */
 	protected String pseudo;
 	protected List<User> listAmi = new ArrayList<User>();
-	
+	protected List<Message> messages = new ArrayList<Message>();
 
-	public User () {}
-	
+	public User() {
+	}
+
 	public User(long id, String nom, String prenom, String pseudo, String dateDeNaissance, List<User> listAmi) {
-		
+
 		this.id = id;
 		this.nom = nom;
 		this.prenom = prenom;
@@ -31,14 +32,23 @@ public class User extends Personne {
 		this.listAmi = listAmi;
 	}
 
+	public User(String nom, String prenom, String pseudo, String dateDeNaissance) {
+
+		this.nom = nom;
+		this.prenom = prenom;
+		this.pseudo = pseudo;
+		this.dateDeNaissance = dateDeNaissance;
+	}
+
 	/**
 	 * Retour l'id de l'utilisateur
+	 * 
 	 * @return
 	 */
 	public long getId() {
 		return id;
 	}
-	
+
 	/**
 	 * Retourne le Nom de l'Utilisateur
 	 * 
@@ -120,11 +130,6 @@ public class User extends Personne {
 	public List<User> getListAmi() {
 		return listAmi;
 	}
-	
-
-
-
-
 
 	public void setListAmi(List<User> listAmi) {
 		this.listAmi = listAmi;
@@ -133,22 +138,34 @@ public class User extends Personne {
 	public void addAmi(User user) {
 		this.listAmi.add(user);
 	}
-	
-	public User getAmi(int index) {
-		return this.listAmi.get(index);
+
+	public User getAmi(long index) {
+		return this.listAmi.get((int) index);
 	}
 
-	public String toString() {
+	public List<Message> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(List<Message> messages) {
+		this.messages = messages;
+	}
+
+	public void addMessage(Message message) {
+		this.messages.add(message);
 		
+	}
+	public String toString() {
+
 		String str = "*******************************\n";
 		str += "NOM : " + this.getNom() + "\n";
 		str += "*******************************\n";
 		str += "LISTE DES AMIS : \n";
-		for(User user : this.listAmi)
-		str += user.toString() + "\n";
+		for (User user : this.listAmi)
+			str += user.toString() + "\n";
 		return str;
-		}
-		
+	}
+
 	/**
 	 * Savoir si l'utilisateur est un modérateur
 	 * 
@@ -207,5 +224,5 @@ public class User extends Personne {
 		}
 		return true;
 	}
-	
+
 }

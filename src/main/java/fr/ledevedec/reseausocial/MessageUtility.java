@@ -7,19 +7,20 @@ public class MessageUtility {
 
 	private InputClavierUtility inputClavier;
 	private UserUtility userUtility;
+	private MessageDAO messageDao;
 	private Scanner scan;
-	
-	private int numeroProfil;
+
+	private long numeroProfil;
 	private char reponse;
-	
-	
+
 	public MessageUtility(UserUtility userUtility) {
 		scan = new Scanner(System.in);
+		messageDao = new MessageDAO();
 		this.userUtility = userUtility;
 		inputClavier = new InputClavierUtility();
 	}
-	
-	public  void writeMessage() {
+
+	public void writeMessage() {
 		reponse = 'O';
 		System.out.println("****************************** ECRIRE UN MESSAGE ********************************");
 		System.out.println("*********************************************************************************");
@@ -29,14 +30,15 @@ public class MessageUtility {
 			numeroProfil = inputClavier.choixClavier();
 
 			if (userUtility.getUsers().get(numeroProfil) != null) {
-				System.out.println("Entrer votre message pour " + userUtility.getUsers().get(numeroProfil).getNom() + " "
-						+ userUtility.getUsers().get(numeroProfil).getPrenom() + " :");
+				System.out.println("Entrer votre message pour " + userUtility.getUsers().get(numeroProfil).getNom()
+						+ " " + userUtility.getUsers().get(numeroProfil).getPrenom() + " :");
 				System.out.print(">> ");
 
 				String message = scan.nextLine();
 
-				userUtility.getUsers().get(numeroProfil).addMessages(new Message(userUtility.getUsers().get(userUtility.getCurrentUserIndex()).getFullName(),
-						userUtility.getUsers().get(numeroProfil).getFullName(), message));
+				userUtility.getUsers().get(numeroProfil).addMessages(
+						new Message(userUtility.getUsers().get(userUtility.getCurrentUserIndex()).getFullName(),
+								userUtility.getUsers().get(numeroProfil).getFullName(), message));
 				System.out.println("*********************************************************************************");
 				System.out.println("Message Envoyé !");
 				System.out.println("*********************************************************************************");
@@ -54,23 +56,22 @@ public class MessageUtility {
 
 	}
 
-	public  void showMessage() {
+	public void showMessage() {
 		if (userUtility.getCurrentUser().isModerateur()) {
 			reponse = 'O';
 			System.out.println("************************** MESSAGES DES UTILISATEURS ****************************");
 			System.out.println("*********************************************************************************");
 
 			while (reponse == 'O') {
-				userUtility.list("FULLNAME+NB-MESSAGE", Optional.empty());
+				userUtility.list("FULLNAME+CURRENT", Optional.empty());
 
 				numeroProfil = inputClavier.choixClavier();
-				System.out.println("*********************************************************************************");
-				if (userUtility.getUsers().get(numeroProfil) != null) {
-					System.out.println("Messages de l'utilisateur : " + userUtility.getUsers().get(numeroProfil).getNom() + " "
-							+ userUtility.getUsers().get(numeroProfil).getPrenom());
 
-					userUtility.list("MESSAGE", Optional.of(numeroProfil));
-				}
+				System.out.println("*********************************************************************************");
+				
+				
+				userUtility.list("MESSAGE", Optional.of(numeroProfil));
+
 				System.out.println("*********************************************************************************");
 				reponse = ' ';
 
@@ -104,7 +105,7 @@ public class MessageUtility {
 
 	}
 
-	public  void delMessagerie() {
+	public void delMessagerie() {
 		if (userUtility.getCurrentUser().isModerateur()) {
 			System.out.println(
 					"******************************* VIDER MESSAGERIE UTILISATEUR ***********************************");
@@ -117,14 +118,14 @@ public class MessageUtility {
 			userUtility.getUsers().get(numeroProfil).viderMessages();
 			System.out.println(
 					"************************************************************************************************");
-			System.out.println("La messagerie de l'utilisateur " + userUtility.getUsers().get(numeroProfil).getNom() + " "
-					+ userUtility.getUsers().get(numeroProfil).getPrenom() + " est vide");
+			System.out.println("La messagerie de l'utilisateur " + userUtility.getUsers().get(numeroProfil).getNom()
+					+ " " + userUtility.getUsers().get(numeroProfil).getPrenom() + " est vide");
 			System.out.println(
 					"************************************************************************************************");
 		}
 	}
 
-	public  void delMessage() {
+	public void delMessage() {
 		if (userUtility.getCurrentUser().isModerateur()) {
 			reponse = 'O';
 			System.out.println("******************************* SUPPRIMER MESSAGE ***********************************");
@@ -168,5 +169,4 @@ public class MessageUtility {
 
 	}
 
-	
 }

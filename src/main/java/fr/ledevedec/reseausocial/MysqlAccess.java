@@ -1,10 +1,7 @@
 package fr.ledevedec.reseausocial;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 public class MysqlAccess {
 
@@ -17,33 +14,20 @@ public class MysqlAccess {
 	private static Connection connect;
 
 	public static Connection getInstance() {
+
 		if (connect == null) {
-			try {
-				connect = DriverManager.getConnection(url, user, passwd);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			new MysqlAccess();
 		}
 		return connect;
-	}
-
-	public MysqlAccess() {
-
-		try {
-			loadDriver();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 	}
 
-	public static void loadDriver() throws Exception {
-
+	private MysqlAccess() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (ClassNotFoundException e) {
+			connect = DriverManager.getConnection(url, user, passwd);
+		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Imposible de charger le Driver jdbc:mysql ");
 		}
 	}
 

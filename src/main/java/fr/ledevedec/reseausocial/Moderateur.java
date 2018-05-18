@@ -22,8 +22,19 @@ public class Moderateur extends User implements Salarie{
 	 * @param dateNaissance
 	 *            Date de naissance du Modérateur
 	 */
+	
+	
+	public Moderateur() {
+		super();
+	}
+	
 	public Moderateur(long id, String nom, String prenom, String pseudo, String dateDeNaissance, List<User> listAmi) {
 		super(id ,nom, prenom, pseudo, dateDeNaissance, listAmi);
+
+	}
+	
+	public Moderateur(String nom, String prenom, String pseudo, String dateDeNaissance) {
+		super(nom, prenom, pseudo, dateDeNaissance);
 
 	}
 

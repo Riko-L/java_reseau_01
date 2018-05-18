@@ -2,22 +2,24 @@ package fr.ledevedec.reseausocial;
 
 public class Message {
 
-	private String expediteur;
-	private String destinataire;
+	
+	private long expediteur;
+	private long destinataire;
 	private String contenu;
 	
 	
-	public Message(String expediteur, String destinataire, String contenu) {
+	public Message(long expediteur, long destinataire, String contenu) {
 	this.expediteur = expediteur;
 	this.destinataire = destinataire;
 	this.contenu = contenu;
 	}
 
+	public Message() {}
 
 	/**
 	 * @return the expediteur
 	 */
-	public String getExpediteur() {
+	public long getExpediteur() {
 		return expediteur;
 	}
 
@@ -25,7 +27,7 @@ public class Message {
 	/**
 	 * @param expediteur the expediteur to set
 	 */
-	public void setExpediteur(String expediteur) {
+	public void setExpediteur(long expediteur) {
 		this.expediteur = expediteur;
 	}
 
@@ -33,7 +35,7 @@ public class Message {
 	/**
 	 * @return the destinataire
 	 */
-	public String getDestinataire() {
+	public long getDestinataire() {
 		return destinataire;
 	}
 
@@ -41,7 +43,7 @@ public class Message {
 	/**
 	 * @param destinataire the destinataire to set
 	 */
-	public void setDestinataire(String destinataire) {
+	public void setDestinataire(long destinataire) {
 		this.destinataire = destinataire;
 	}
 
@@ -61,7 +63,6 @@ public class Message {
 		this.contenu = contenu;
 	}
 
-	
-	
+
 	
 }

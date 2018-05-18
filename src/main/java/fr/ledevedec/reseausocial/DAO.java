@@ -1,6 +1,7 @@
 package fr.ledevedec.reseausocial;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public abstract class DAO<T> {
 
@@ -19,7 +20,7 @@ public abstract class DAO<T> {
 	 * @param obj
 	 * @return
 	 */
-	public abstract T create(T obj);
+	public abstract T create(T obj ) throws SQLException;
 	
 	/**
 	 * Permet de mettre à jour les données d'une entrée de la base
@@ -33,6 +34,8 @@ public abstract class DAO<T> {
 	 * @param obj
 	 */
 	public abstract void delete(T obj);
+
+	
 	
 	
 	
